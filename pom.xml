@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 1.创建工程 删除src目录和pom中的<parent>部分 -->
+
+    <groupId>com.example</groupId>
+    <artifactId>springCloudDemo</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>springCloudDemo</name>
+    <description>springCloudDemo</description>
+
+    <!-- 创建子模块时自动生存 -->
+    <modules>
+        <!-- 5. File->New->Module创建子模块 -->
+        <module>common</module>
+        <module>service1</module>
+        <module>service2</module>
+    </modules>
+
+    <!-- 2.将打包类型<packing>标签设置为pom -->
+    <!-- 父工程的pom文件只作为项目子模块的整合 不会生成jar包文件 -->
+    <packaging>pom</packaging>
+
+    <!-- 版本管理 -->
+    <properties>
+        <java.version>11</java.version>
+        <!-- 3.指定springboot springCloud springCloudAlibaba 的版本 -->
+        <!-- 版本说明可以参考: https://github.com/alibaba/spring-cloud-alibaba/wiki 的版本说明 -->
+        <spring-boot.version>2.7.16</spring-boot.version>
+        <spring-cloud.version>2021.0.5</spring-cloud.version>
+        <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
+
+        <swagger.version>3.0.0</swagger.version>
+        <lombook.version>1.18.26</lombook.version>
+        <hutool.version>5.8.22</hutool.version>
+    </properties>
+
+    <!-- dependencies:子项目会继承父项目的依赖 -->
+    <dependencies>
+        <!-- swagger ui 3.0-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+
+        <!--  lombok   -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombook.version}</version>
+        </dependency>
+
+
+        <!-- hu tool工具类 -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
+    </dependencies>
+
+    <!-- dependencyManagement:只声明依赖 并不实现引入 -->
+    <!-- 只有子项目中声明了该依赖项 且没有指定具体版本 子项目才会引入该依赖 -->
+    <!-- 如果子项目指定了具体版本 则会引入子项目的依赖 -->
+    <dependencyManagement>
+        <!-- 4.添加springboot springCloud springCloudAlibaba的依赖 -->
+        <dependencies>
+            <!-- springCloud -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <!-- 指定scope为import 引入其依赖的版本 -->
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- SpringBoot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- SpringCloud alibaba -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
