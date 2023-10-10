@@ -15,7 +15,9 @@ public class Service2Application {
         SpringApplication.run(Service2Application.class, args);
     }
 
+    // 启动负载均衡
     @LoadBalanced
+    // 注册对象
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();

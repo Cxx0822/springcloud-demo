@@ -192,6 +192,12 @@ bash bin/startup.sh -m standalone
         <groupId>com.alibaba.cloud</groupId>
         <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
     </dependency>
+
+    <!-- 负载均衡 -->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+    </dependency>
 </dependencies>
 ```
 
@@ -226,11 +232,13 @@ spring:
 &emsp;&emsp;例如在Service2中调用Service1的接口。  
 1. 在Service2的启动类中声明RestTemplate。 
 ```java
+// 启动负载均衡
 @LoadBalanced
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
+// 注册对象
+@Bean
+public RestTemplate restTemplate() {
+    return new RestTemplate();
+}
 ```
 
 2. 在Service2Controller的接口中调用Service1服务：
@@ -247,13 +255,12 @@ public class Service2Controller {
 
     @GetMapping("test")
     public AxiosResult test() {
-        ServiceInstance serviceInstance = discoveryClient.getInstances("example-service1").get(0);
-        String url = serviceInstance.getHost() + ":" + serviceInstance.getPort();
+        // 直接使用微服务名字， 从nacos中获取服务地址 (需要添加依赖并启动负载均衡)
+        String url = "example-service1";
 
-        AxiosResult axiosResult = restTemplate.getForObject("http://" + url + "/service1/test", AxiosResult.class);
-        return axiosResult;
+        return restTemplate.getForObject("http://" + url + "/service1/test", AxiosResult.class);
     }
 }
 ```
 
-3. 启动2个服务，在浏览器中输入http://127.0.0.1:8082/service2/test，查看是否正确输出Service1的内容。     
+3. 启动2个服务，在浏览器中输入http://127.0.0.1:8082/service2/test， 查看是否正确输出Service1的内容。     
