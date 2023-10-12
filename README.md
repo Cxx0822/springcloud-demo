@@ -16,7 +16,7 @@
 
 # 项目搭建
 ## 创建父工程
-1. 打开IDEA，创建新工程，删除src目录和pom.xml中的<parent>部分。       
+1. 打开IDEA，创建新工程，删除src目录和pom.xml中的parent部分。       
 2. 在pom.xml文件中添加标签:
 
 ```xml
