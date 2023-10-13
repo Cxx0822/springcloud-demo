@@ -229,6 +229,8 @@ spring:
 5. 启动多个服务，查看Nacos控制台的服务列表。   
 
 ## 服务间调用
+&emsp;&emsp;在SpringCloud提供了两种方式来解决服务与服务通信的问题，RestTemplate和Feign。虽然从名字上看这两种调用的方式不同，但在底层还是和HttpClient一样，采用Http的方式进行调用的。只不过是对HttpClient进行的封装。      
+### RestTemplate
 &emsp;&emsp;例如在Service2中调用Service1的接口。  
 1. 在Service2的启动类中声明RestTemplate。 
 ```java
@@ -253,8 +255,8 @@ public class Service2Controller {
     @Resource
     private DiscoveryClient discoveryClient;
 
-    @GetMapping("test")
-    public AxiosResult test() {
+    @GetMapping("testRestTemplate")
+    public AxiosResult testRestTemplate() {
         // 直接使用微服务名字， 从nacos中获取服务地址 (需要添加依赖并启动负载均衡)
         String url = "example-service1";
 
@@ -263,4 +265,63 @@ public class Service2Controller {
 }
 ```
 
-3. 启动2个服务，在浏览器中输入http://127.0.0.1:8082/service2/test， 查看是否正确输出Service1的内容。     
+3. 启动2个服务，在浏览器中输入http://127.0.0.1:8082/service2/testRestTemplate ，查看是否正确输出Service1的内容。     
+
+### Feign
+&emsp;&emsp;Feign是Spring Cloud提供的一个声明式的伪Http客户端，它使得调用远程服务就像调用本地服务一样简单，只需要创建一个接口并添加一个注解即可。     
+&emsp;&emsp;Nacos很好的兼容了Feign，Feign默认集成了Ribbon，所以在Nacos下使用Fegin默认就实现了负载均衡的效果。  
+&emsp;&emsp;例如在Service2中调用Service1的接口。  
+1. 在Service2中添加依赖:
+```xml
+<!-- Feign组件 -->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-openfeign</artifactId>
+</dependency>
+```     
+
+2. 在启动类中添加注解
+```java
+@SpringBootApplication
+// 开启nacos
+@EnableDiscoveryClient
+// 开启Feign
+@EnableFeignClients
+public class Service2Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Service2Application.class, args);
+    }
+}
+```
+
+3. 定义与Service1服务的调用接口
+```java
+/**
+ * 调用example-service1服务的/service1/test接口
+ * example-service1为注册中心的服务名
+ */
+@FeignClient(name = "example-service1")
+public interface Service1Feign {
+    @RequestMapping("/service1/test")
+    AxiosResult test();
+}
+```
+
+&emsp;&emsp;example-service1为注册中心的服务名，/service1/test是Service1中controller中的接口。      
+
+4. 在controller中调用接口实现远程访问
+```java
+@RestController
+@RequestMapping("service2")
+public class Service2Controller {
+    @Resource
+    private Service1Feign service1Feign;
+
+    @GetMapping("testFeign")
+    public AxiosResult testFeign() {
+        return service1Feign.test();
+    }
+}
+```
+
+5. 启动2个服务，在浏览器中输入http://127.0.0.1:8082/service2/testFeign ，查看是否正确输出Service1的内容。    
