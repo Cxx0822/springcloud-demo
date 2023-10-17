@@ -170,7 +170,7 @@ spring:
 
 &emsp;&emsp;依次启动Service1和Service2工程，没有报错则配置成功。         
 
-# 配置Nacos
+# 服务治理Nacos
 &emsp;&emsp;[Nacos](https://nacos.io/zh-cn/index.html)是一个更易于构建云原生应用的动态服务发现、配置管理和服务管理平台。是Spring Cloud Alibaba 组件之一，负责服务注册发现和服务配置。       
 
 ## 安装Nacos
@@ -325,3 +325,76 @@ public class Service2Controller {
 ```
 
 5. 启动2个服务，在浏览器中输入http://127.0.0.1:8082/service2/testFeign ，查看是否正确输出Service1的内容。    
+
+# 服务网关 Gateway
+&emsp;&emsp;所谓的网关，就是指系统的统一入口，它封装了应用程序的内部结构，为客户端提供统一服务，一些与业务本身功能无关的公共逻辑可以在这里实现，诸如认证、鉴权、监控、路由转发等等。(类似于Web前端中路由的概念)          
+## 创建gateway模块
+1. 添加依赖:  
+```xml
+<dependencies>
+    <!--gateway网关-->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-gateway</artifactId>
+    </dependency>
+
+    <!--nacos客户端-->
+    <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+    </dependency>
+    </dependencies>
+```
+
+2. 添加启动类
+```java
+@SpringBootApplication
+@EnableDiscoveryClient
+public class GatewayApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(GatewayApplication.class, args);
+    }
+}
+```
+
+3. 添加配置文件
+```yml
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      discovery:
+        locator:
+          # 让gateway可以发现nacos中的微服务
+          enabled: true
+
+      routes:
+        # 路由id
+        - id: "example-service1"
+          # 真实url
+          uri: http://127.0.0.1:8081
+          # 断言 路径名
+          predicates:
+            - Path=/service1/**
+
+        # 路由id
+        - id: "example-service2"
+          # 真实url
+          uri: http://127.0.0.1:8082
+          # 断言 路径名
+          predicates:
+            - Path=/service2/**
+```
+
+4. 利用网关调用微服务    
+&emsp;&emsp;启动网关服务、Service1和Service2服务，在浏览器中输入http://127.0.0.1:8080/service1/test ，即可调用Service1的service1/test接口。     
+

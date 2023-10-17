@@ -17,6 +17,7 @@
         <module>common</module>
         <module>service1</module>
         <module>service2</module>
+        <module>gateway</module>
     </modules>
 
     <!-- 2.将打包类型<packing>标签设置为pom -->

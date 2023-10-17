@@ -1,0 +1,34 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      discovery:
+        locator:
+          # 让gateway可以发现nacos中的微服务
+          enabled: true
+
+      routes:
+        # 路由id
+        - id: "example-service1"
+          # 真实url
+          uri: http://127.0.0.1:8081
+          # 断言 路径名
+          predicates:
+            - Path=/service1/**
+
+        # 路由id
+        - id: "example-service2"
+          # 真实url
+          uri: http://127.0.0.1:8082
+          # 断言 路径名
+          predicates:
+            - Path=/service2/**
