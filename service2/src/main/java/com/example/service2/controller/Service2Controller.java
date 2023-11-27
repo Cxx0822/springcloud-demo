@@ -1,6 +1,6 @@
 package com.example.service2.controller;
 
-import com.example.common.result.AxiosResult;
+import com.example.common.result.CommonResult;
 import com.example.service2.service.Service1Feign;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,15 +20,15 @@ public class Service2Controller {
     private Service1Feign service1Feign;
 
     @GetMapping("testRestTemplate")
-    public AxiosResult testRestTemplate() {
+    public CommonResult testRestTemplate() {
         // 直接使用微服务名字， 从nacos中获取服务地址 (需要添加依赖并启动负载均衡)
         String url = "example-service1";
 
-        return restTemplate.getForObject("http://" + url + "/service1/test", AxiosResult.class);
+        return restTemplate.getForObject("http://" + url + "/service1/test", CommonResult.class);
     }
 
     @GetMapping("testFeign")
-    public AxiosResult testFeign() {
+    public CommonResult testFeign() {
         return service1Feign.test();
     }
 }

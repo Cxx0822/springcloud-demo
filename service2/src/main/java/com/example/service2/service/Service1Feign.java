@@ -1,6 +1,6 @@
 package com.example.service2.service;
 
-import com.example.common.result.AxiosResult;
+import com.example.common.result.CommonResult;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -11,5 +11,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @FeignClient(name = "example-service1")
 public interface Service1Feign {
     @RequestMapping("/service1/test")
-    AxiosResult test();
+    CommonResult test();
 }

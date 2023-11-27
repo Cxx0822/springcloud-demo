@@ -1,6 +1,6 @@
 package com.example.service1.controller;
 
-import com.example.common.result.AxiosResult;
+import com.example.common.result.CommonResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class Service1Controller {
 
     @GetMapping("/test")
-    public AxiosResult test() {
-        return AxiosResult.ok().message("service1 test");
+    public CommonResult test() {
+        return CommonResult.ok().message("service1 test");
     }
 }

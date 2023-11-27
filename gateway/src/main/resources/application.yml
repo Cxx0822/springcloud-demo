@@ -32,3 +32,14 @@ spring:
           # 断言 路径名
           predicates:
             - Path=/service2/**
+            -
+      # 网关全局跨域配置 (子模块不需要配置)
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+        # 解决options请求被拦截的问题
+        add-to-simple-url-handler-mapping: true

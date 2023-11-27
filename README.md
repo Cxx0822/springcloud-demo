@@ -398,3 +398,5 @@ spring:
 4. 利用网关调用微服务    
 &emsp;&emsp;启动网关服务、Service1和Service2服务，在浏览器中输入http://127.0.0.1:8080/service1/test ，即可调用Service1的service1/test接口。     
 
+
+# 服务部署
